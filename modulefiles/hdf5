@@ -1,0 +1,4 @@
+#%Module1.0
+module-whatis "Hdf5"
+set HDF5_HOME /opt/cray/pe/hdf5/default
+prepend-path PATH $HDF5_HOME/bin

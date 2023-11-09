@@ -1,1 +1,32 @@
-! Blank file in which we can put "overrides" for parameters
+#override TOPO_EDITS_FILE = "topo_edits_011818.nc"
+#override CHANNEL_LIST_FILE = MOM_channels_SPEAR
+#override SALT_RESTORE_FILE = "salt_restore_PHC2.1degOM4.v20180716.nc"
+#override SALT_RESTORE_VARIABLE = "SALT"   ! default = "salt"
+#override FLUX_SST_CONST = 4.0
+#override RESTORE_TEMPERATURE = TRUE
+#override SST_RESTORE_FILE  = "temp_restore.nc" 
+#override SST_RESTORE_VARIABLE = "temp"
+
+#override KV_ML_INVZ2 = 1.0E-4
+#override DEFAULT_ANSWER_DATE=20181231
+#override INTERNAL_WAVE_SPEED_BETTER_EST = False
+
+
+#override REMAP_UV_USING_OLD_ALG = True
+#override Z_INIT_REMAP_OLD_ALG = True
+#override FIX_USTAR_GUSTLESS_BUG =False
+#override GRID_ROTATION_ANGLE_BUGS = True
+#override KAPPA_SHEAR_ALL_LAYER_TKE_BUG = True
+#override KAPPA_SHEAR_ITER_BUG = True
+#override USE_GM_WORK_BUG = True
+#override USE_MLD_ITERATION = False
+#override USE_TRIPOLAR_GEOLONB_BUG =True
+#override GUST_CONST = 0.02
+#override MEKE_ALPHA_EADY = 0.05
+#override MEKE_ALPHA_RHINES = 0.05
+#override MIN_SALINITY = 0.01
+
+#override KH_BG_2D_BUG=True
+#override USE_DIABATIC_TIME_BUG=True
+#override USE_INACCURATE_PGF_RHO_ANOM=True
+#override NDIFF_USE_UNMASKED_TRANSPORT_BUG=True

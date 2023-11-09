@@ -1,0 +1,4 @@
+#%Module1.0
+module-whatis "Netcdf"
+set NETCDF_HOME /opt/cray/pe/netcdf/default
+prepend-path PATH $NETCDF_HOME/bin
