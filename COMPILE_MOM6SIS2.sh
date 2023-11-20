@@ -5,9 +5,9 @@ export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/lib64:/lustre/f2/dev/William.Gregory
 cd /lustre/f2/dev/$USER/
 
 if [ ! -d MOM6-examples ]; then
-    git clone --recursive https://github.com/William-gregory/MOM6-examples.git MOM6-examples
-    git branch forpy_dev
-    git switch forpy_dev
+    git clone -b forpy_dev --recursive https://github.com/William-gregory/MOM6-examples.git MOM6-examples
+    #git branch forpy_dev #git branch was run already, so don't need to remake
+    #git switch forpy_dev
 fi
 
 cd /lustre/f2/dev/$USER/MOM6-examples/
@@ -23,7 +23,6 @@ if [ ! -e ice_ocean_SIS2/OM4_025.JRA/INPUT/woa13_decav_ptemp_monthly_fulldepth_0
     ln -sf /autofs/ncrc-svm1_home1/Alistair.Adcroft/fre/FMS2023.01_mom6_20230630/MOM6_SIS2_compile/src/mom6/ice_ocean_SIS2/OM4_025.JRA/INPUT/woa13_decav_s_monthly_fulldepth_01.nc woa13_decav_ptemp_monthly_fulldepth_01.nc
     cd /lustre/f2/dev/$USER/MOM6-examples/
 fi
-
 
 ### CREATE BUILD DIRECTORY WHERE COMPILE WILL HAPPEN ###
 if [ ! -d build ]; then
