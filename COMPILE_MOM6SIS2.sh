@@ -1,27 +1,29 @@
 #!/bin/bash
 
-export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/lib64:/lustre/f2/dev/William.Gregory/miniconda_setup/miniconda/lib"
+export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/lib64:/gpfs/f5/gfdl_o/scratch/William.Gregory/miniconda_setup/miniconda/envs/ML/lib"
 
-cd /lustre/f2/dev/$USER/
+cd /gpfs/f5/gfdl_o/scratch/$USER/
 
 if [ ! -d MOM6-examples ]; then
     git clone -b forpy_dev --recursive https://github.com/William-gregory/MOM6-examples.git MOM6-examples
+    cd /gpfs/f5/gfdl_o/scratch/$USER/MOM6-examples/src/SIS2/src
+    git checkout forpy_dev
     #git branch forpy_dev #git branch was run already, so don't need to remake
     #git switch forpy_dev
 fi
 
-cd /lustre/f2/dev/$USER/MOM6-examples/
+cd /gpfs/f5/gfdl_o/scratch/$USER/MOM6-examples/
 #may need to link data sets:
 if [ ! -e ice_ocean_SIS2/OM4_025.JRA/INPUT/woa13_decav_s_monthly_fulldepth_01.nc ]; then
     cd ice_ocean_SIS2/OM4_025.JRA/INPUT/
     ln -sf /autofs/ncrc-svm1_home1/Alistair.Adcroft/fre/FMS2023.01_mom6_20230630/MOM6_SIS2_compile/src/mom6/ice_ocean_SIS2/OM4_025.JRA/INPUT/woa13_decav_s_monthly_fulldepth_01.nc woa13_decav_s_monthly_fulldepth_01.nc
-    cd /lustre/f2/dev/$USER/MOM6-examples/
+    cd /gpfs/f5/gfdl_o/scratch/$USER/MOM6-examples/
 fi
 
 if [ ! -e ice_ocean_SIS2/OM4_025.JRA/INPUT/woa13_decav_ptemp_monthly_fulldepth_01.nc ]; then
     cd ice_ocean_SIS2/OM4_025.JRA/INPUT/
     ln -sf /autofs/ncrc-svm1_home1/Alistair.Adcroft/fre/FMS2023.01_mom6_20230630/MOM6_SIS2_compile/src/mom6/ice_ocean_SIS2/OM4_025.JRA/INPUT/woa13_decav_s_monthly_fulldepth_01.nc woa13_decav_ptemp_monthly_fulldepth_01.nc
-    cd /lustre/f2/dev/$USER/MOM6-examples/
+    cd /gpfs/f5/gfdl_o/scratch/$USER/MOM6-examples/
 fi
 
 ### CREATE BUILD DIRECTORY WHERE COMPILE WILL HAPPEN ###

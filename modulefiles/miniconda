@@ -1,4 +1,4 @@
 #%Module1.0
 module-whatis "Miniconda Python Distribution"
-set MINICONDA_HOME /lustre/f2/dev/William.Gregory/miniconda_setup/miniconda
+set MINICONDA_HOME /gpfs/f5/gfdl_o/scratch/William.Gregory/miniconda_setup/miniconda/envs/ML
 prepend-path PATH $MINICONDA_HOME/bin
