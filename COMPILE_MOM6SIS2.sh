@@ -8,6 +8,8 @@ if [ ! -d MOM6-examples ]; then
     git clone -b forpy_dev --recursive https://github.com/William-gregory/MOM6-examples.git MOM6-examples
     cd /gpfs/f5/gfdl_o/scratch/$USER/MOM6-examples/src/SIS2/src
     git checkout forpy_dev
+    cd /gpfs/f5/gfdl_o/scratch/$USER/MOM6-examples/src/FMS1
+    git checkout_forpy_dev
     #git branch forpy_dev #git branch was run already, so don't need to remake
     #git switch forpy_dev
 fi
