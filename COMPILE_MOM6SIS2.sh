@@ -10,6 +10,8 @@ if [ ! -d MOM6-examples ]; then
     git checkout forpy_dev
     cd /gpfs/f5/gfdl_o/scratch/$USER/MOM6-examples/src/FMS1
     git checkout_forpy_dev
+    cd /gpfs/f5/gfdl_o/scratch/$USER/MOM6-examples/
+    ln -sf /gpfs/f5/gfdl_o/world-shared/datasets .datasets
     #git branch forpy_dev #git branch was run already, so don't need to remake
     #git switch forpy_dev
 fi
@@ -18,13 +20,13 @@ cd /gpfs/f5/gfdl_o/scratch/$USER/MOM6-examples/
 #may need to link data sets:
 if [ ! -e ice_ocean_SIS2/OM4_025.JRA/INPUT/woa13_decav_s_monthly_fulldepth_01.nc ]; then
     cd ice_ocean_SIS2/OM4_025.JRA/INPUT/
-    ln -sf /autofs/ncrc-svm1_home1/Alistair.Adcroft/fre/FMS2023.01_mom6_20230630/MOM6_SIS2_compile/src/mom6/ice_ocean_SIS2/OM4_025.JRA/INPUT/woa13_decav_s_monthly_fulldepth_01.nc woa13_decav_s_monthly_fulldepth_01.nc
+    ln -sf .datasets/obs/NOAA-NODC/WOA13/v2a/woa13_decav_s_monthly_fulldepth_01.nc woa13_decav_s_monthly_fulldepth_01.nc
     cd /gpfs/f5/gfdl_o/scratch/$USER/MOM6-examples/
 fi
 
 if [ ! -e ice_ocean_SIS2/OM4_025.JRA/INPUT/woa13_decav_ptemp_monthly_fulldepth_01.nc ]; then
     cd ice_ocean_SIS2/OM4_025.JRA/INPUT/
-    ln -sf /autofs/ncrc-svm1_home1/Alistair.Adcroft/fre/FMS2023.01_mom6_20230630/MOM6_SIS2_compile/src/mom6/ice_ocean_SIS2/OM4_025.JRA/INPUT/woa13_decav_s_monthly_fulldepth_01.nc woa13_decav_ptemp_monthly_fulldepth_01.nc
+    ln -sf .datasets/obs/NOAA-NODC/WOA13/v2a/woa13_decav_ptemp_monthly_fulldepth_01.nc woa13_decav_ptemp_monthly_fulldepth_01.nc
     cd /gpfs/f5/gfdl_o/scratch/$USER/MOM6-examples/
 fi
 
@@ -57,7 +59,7 @@ else
        make NETCDF=3 REPRO=1 libfms.a -j
     fi
 fi
-cd /lustre/f2/dev/$USER/MOM6-examples/build
+cd /gpfs/f5/gfdl_o/scratch/$USER/MOM6-examples/build
 
 #BUILD MOM6/SIS2
 if [ ! -d ice_ocean_SIS2 ]; then
