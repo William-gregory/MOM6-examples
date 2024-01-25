@@ -1,3 +1,46 @@
+# Quick guide to Compiling MOM6-SIS2 with Forpy
+
+    export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/lib64:/gpfs/f5/gfdl_o/scratch/William.Gregory/miniconda_setup/miniconda/envs/ML/lib"
+
+    cd /gpfs/f5/gfdl_o/scratch/$USER/
+
+    git clone -b forpy_dev --recursive https://github.com/William-gregory/MOM6-examples.git MOM6-examples
+    cd /gpfs/f5/gfdl_o/scratch/$USER/MOM6-examples/src/SIS2/src
+    git checkout forpy_dev
+    cd /gpfs/f5/gfdl_o/scratch/$USER/MOM6-examples/src/FMS1
+    git checkout_forpy_dev
+    cd /gpfs/f5/gfdl_o/scratch/$USER/MOM6-examples/
+    ln -sf /gpfs/f5/gfdl_o/world-shared/datasets .datasets
+
+    cd /gpfs/f5/gfdl_o/scratch/$USER/MOM6-examples/
+
+    cd ice_ocean_SIS2/OM4_025.JRA/INPUT/
+    ln -sf .datasets/obs/NOAA-NODC/WOA13/v2a/woa13_decav_s_monthly_fulldepth_01.nc woa13_decav_s_monthly_fulldepth_01.nc
+    cd /gpfs/f5/gfdl_o/scratch/$USER/MOM6-examples/
+
+    cd ice_ocean_SIS2/OM4_025.JRA/INPUT/
+    ln -sf .datasets/obs/NOAA-NODC/WOA13/v2a/woa13_decav_ptemp_monthly_fulldepth_01.nc woa13_decav_ptemp_monthly_fulldepth_01.nc
+    cd /gpfs/f5/gfdl_o/scratch/$USER/MOM6-examples/
+
+    mkdir build
+    cd build
+
+    mkdir -p fms
+    cd fms
+    rm -f path_names
+    ../../src/mkmf/bin/list_paths -l ../../src/FMS
+    ../../src/mkmf/bin/mkmf -t ../../src/mkmf/templates/ncrc5-intel-classic.mk -p libfms.a -c "-Duse_libMPI -Duse_netCDF" path_names
+    make NETCDF=3 REPRO=1 libfms.a -j
+  
+    cd /gpfs/f5/gfdl_o/scratch/$USER/MOM6-examples/build
+
+    mkdir -p ice_ocean_SIS2
+    cd ice_ocean_SIS2
+    rm -f path_names
+    ../../src/mkmf/bin/list_paths -l ./ ../../src/MOM6/config_src/{infra/FMS1,memory/dynamic_nonsymmetric,drivers/FMS_cap,external} ../../src/SIS2/config_src/dynamic ../../src/MOM6/src/{*,*/*}/ ../../src/{atmos_null,coupler,land_null,ice_param,icebergs/src,SIS2,FMS/coupler,FMS/include}/
+    ../../src/mkmf/bin/mkmf -t ../../src/mkmf/templates/ncrc5-intel-classic.mk -o '-I../fms -I/opt/cray/pe/netcdf/default/intel/19.0/include -I/opt/cray/pe/hdf5/default/intel/19.0/include' -p MOM6 -l '-L../fms -lfms -L/opt/cray/pe/netcdf/default/intel/19.0/lib -lnetcdff -lnetcdf -L/opt/cray/pe/hdf5/default/intel/19.0/lib -lhdf5 `python3-config --ldflags --embed`' -c '-Duse_AM3_physics -D_USE_LEGACY_LAND_' path_names
+    make REPRO=1 MOM6 -j
+
 | MOM6 source repo | MOM6 documentation | MOM6 coverage |
 |:----------------:|:------------------:|:-------------:|
 | [![Regression](https://github.com/NOAA-GFDL/MOM6/actions/workflows/regression.yml/badge.svg)](https://github.com/NOAA-GFDL/MOM6/actions/workflows/regression.yml) | [![Read The Docs Status](https://readthedocs.org/projects/mom6/badge/?version=main)](https://mom6.readthedocs.io/en/main/?badge=main) | [![codecov](https://codecov.io/gh/NOAA-GFDL/MOM6/branch/dev/gfdl/graph/badge.svg?token=uF8SVydCdp)](https://codecov.io/gh/NOAA-GFDL/MOM6) |
