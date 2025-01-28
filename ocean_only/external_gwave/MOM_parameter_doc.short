@@ -160,6 +160,7 @@ THICKNESS_CONFIG = "external_gwave" ! default = "uniform"
                                 !     uniform - uniform thickness layers evenly distributed
                                 !       between the surface and MAXIMUM_DEPTH.
                                 !     list - read a list of positive interface depths.
+                                !     param - use thicknesses from parameter THICKNESS_INIT_VALUES.
                                 !     DOME - use a slope and channel configuration for the
                                 !       DOME sill-overflow test case.
                                 !     ISOMIP - use a configuration for the
@@ -236,11 +237,7 @@ KV_BBL_MIN = 1.0E-06            !   [m2 s-1] default = 1.0E-04
 
 ! === module MOM_thickness_diffuse ===
 
-! === module MOM_porous_barriers ===
-
 ! === module MOM_dynamics_split_RK2 ===
-
-! === module MOM_continuity ===
 
 ! === module MOM_continuity_PPM ===
 

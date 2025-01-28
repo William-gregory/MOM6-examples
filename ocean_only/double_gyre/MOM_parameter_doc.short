@@ -144,11 +144,7 @@ KV = 1.0E-04                    !   [m2 s-1]
 
 ! === module MOM_thickness_diffuse ===
 
-! === module MOM_porous_barriers ===
-
 ! === module MOM_dynamics_split_RK2 ===
-
-! === module MOM_continuity ===
 
 ! === module MOM_continuity_PPM ===
 ETA_TOLERANCE = 1.0E-12         !   [m] default = 1.0E-10
@@ -265,8 +261,7 @@ VARIABLE_BUOYFORCE = False      !   [Boolean] default = True
 WIND_CONFIG = "2gyre"           ! default = "zero"
                                 ! The character string that indicates how wind forcing is specified.  Valid
                                 ! options include (file), (data_override), (2gyre), (1gyre), (gyres), (zero),
-                                ! (const), (Neverworld), (scurves), (ideal_hurr), (SCM_ideal_hurr),
-                                ! (SCM_CVmix_tests) and (USER).
+                                ! (const), (Neverworld), (scurves), (ideal_hurr), (SCM_CVmix_tests) and (USER).
 
 ! === module MOM_main (MOM_driver) ===
 DT_FORCING = 2400.0             !   [s] default = 1200.0

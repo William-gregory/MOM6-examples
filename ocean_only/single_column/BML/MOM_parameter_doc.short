@@ -177,11 +177,7 @@ KV = 1.0E-04                    !   [m2 s-1]
 
 ! === module MOM_thickness_diffuse ===
 
-! === module MOM_porous_barriers ===
-
 ! === module MOM_dynamics_unsplit ===
-
-! === module MOM_continuity ===
 
 ! === module MOM_continuity_PPM ===
 UPWIND_1ST_CONTINUITY = True    !   [Boolean] default = False
@@ -323,8 +319,7 @@ BUOY_CONFIG = "data_override"   ! default = "zero"
 WIND_CONFIG = "data_override"   ! default = "zero"
                                 ! The character string that indicates how wind forcing is specified.  Valid
                                 ! options include (file), (data_override), (2gyre), (1gyre), (gyres), (zero),
-                                ! (const), (Neverworld), (scurves), (ideal_hurr), (SCM_ideal_hurr),
-                                ! (SCM_CVmix_tests) and (USER).
+                                ! (const), (Neverworld), (scurves), (ideal_hurr), (SCM_CVmix_tests) and (USER).
 READ_GUST_2D = True             !   [Boolean] default = False
                                 ! If true, use a 2-dimensional gustiness supplied from an input file
 GUST_2D_FILE = "forcing_monthly.nc" !

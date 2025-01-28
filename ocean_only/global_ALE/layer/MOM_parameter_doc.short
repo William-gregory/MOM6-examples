@@ -237,13 +237,9 @@ FGNV_C_MIN = 0.01               !   [m s-1] default = 0.0
                                 ! A minium wave speed used in the Ferrari et al., 2010, streamfunction
                                 ! formulation.
 
-! === module MOM_porous_barriers ===
-
 ! === module MOM_dynamics_split_RK2 ===
 TIDES = True                    !   [Boolean] default = False
                                 ! If true, apply tidal momentum forcing.
-
-! === module MOM_continuity ===
 
 ! === module MOM_continuity_PPM ===
 ETA_TOLERANCE = 1.0E-06         !   [m] default = 3.15E-09
@@ -332,7 +328,7 @@ FOX_KEMPER_ML_RESTRAT_COEF = 20.0 !   [nondim] default = 0.0
                                 ! instabilities, times the minimum of the ratio of the mesoscale eddy kinetic
                                 ! energy to the large-scale geostrophic kinetic energy or 1 plus the square of
                                 ! the grid spacing over the deformation radius, as detailed by Fox-Kemper et al.
-                                ! (2010)
+                                ! (2011)
 
 ! === module MOM_diagnostics ===
 
@@ -525,8 +521,7 @@ SALINITYRESTORE_FILE = "ocean_forcing_daily.nc" !
 WIND_CONFIG = "file"            ! default = "zero"
                                 ! The character string that indicates how wind forcing is specified.  Valid
                                 ! options include (file), (data_override), (2gyre), (1gyre), (gyres), (zero),
-                                ! (const), (Neverworld), (scurves), (ideal_hurr), (SCM_ideal_hurr),
-                                ! (SCM_CVmix_tests) and (USER).
+                                ! (const), (Neverworld), (scurves), (ideal_hurr), (SCM_CVmix_tests) and (USER).
 WIND_FILE = "ocean_forcing_daily.nc" !
                                 ! The file in which the wind stresses are found in variables STRESS_X and
                                 ! STRESS_Y.

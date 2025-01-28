@@ -4,6 +4,10 @@
 USE_REGRIDDING = True           !   [Boolean] default = False
                                 ! If True, use the ALE algorithm (regridding/remapping). If False, use the
                                 ! layered isopycnal algorithm.
+REMAP_UV_USING_OLD_ALG = True   !   [Boolean] default = False
+                                ! If true, uses the old remapping-via-a-delta-z method for remapping u and v. If
+                                ! false, uses the new method that remaps between grids described by an old and
+                                ! new thickness.
 THICKNESSDIFFUSE = True         !   [Boolean] default = False
                                 ! If true, isopycnal surfaces are diffused with a Laplacian coefficient of KHTH.
 THICKNESSDIFFUSE_FIRST = True   !   [Boolean] default = False
@@ -149,7 +153,7 @@ NK = 75                         !   [nondim]
                                 ! The number of model layers.
 
 ! === module MOM_EOS ===
-DTFREEZE_DP = -7.75E-08         !   [deg C Pa-1] default = 0.0
+DTFREEZE_DP = -7.75E-08         !   [degC Pa-1] default = 0.0
                                 ! When TFREEZE_FORM=LINEAR, this is the derivative of the freezing potential
                                 ! temperature with pressure.
 
@@ -186,10 +190,6 @@ COORD_CONFIG = "file"           ! default = "none"
                                 !     USER - call a user modified routine.
 COORD_FILE = "layer_coord.nc"   !
                                 ! The file from which the coordinate densities are read.
-REMAP_UV_USING_OLD_ALG = True   !   [Boolean] default = False
-                                ! If true, uses the old remapping-via-a-delta-z method for remapping u and v. If
-                                ! false, uses the new method that remaps between grids described by an old and
-                                ! new thickness.
 REGRIDDING_COORDINATE_MODE = "HYCOM1" ! default = "LAYER"
                                 ! Coordinate mode for vertical regridding. Choose among the following
                                 ! possibilities:  LAYER - Isopycnal or stacked shallow water layers
@@ -213,6 +213,8 @@ ALE_COORDINATE_CONFIG = "HYBRID:hycom1_75_800m.nc,sigma2,FNC1:2,4000,4.5,.01" ! 
                                 !                by a comma or space, e.g. FILE:lev.nc,dz
                                 !                or FILE:lev.nc,interfaces=zw
                                 !  WOA09[:N]   - the WOA09 vertical grid (approximately)
+                                !  WOA09INT[:N] - layers spanned by the WOA09 depths
+                                !  WOA23INT[:N] - layers spanned by the WOA23 depths
                                 !  FNC1:string - FNC1:dz_min,H_total,power,precision
                                 !  HYBRID:string - read from a file. The string specifies
                                 !                the filename and two variable names, separated
@@ -305,6 +307,8 @@ DIAG_COORD_DEF_RHO2 = "FILE:diag_rho2.nc,interfaces=rho2" ! default = "WOA09"
                                 !                by a comma or space, e.g. FILE:lev.nc,dz
                                 !                or FILE:lev.nc,interfaces=zw
                                 !  WOA09[:N]   - the WOA09 vertical grid (approximately)
+                                !  WOA09INT[:N] - layers spanned by the WOA09 depths
+                                !  WOA23INT[:N] - layers spanned by the WOA23 depths
                                 !  FNC1:string - FNC1:dz_min,H_total,power,precision
                                 !  HYBRID:string - read from a file. The string specifies
                                 !                the filename and two variable names, separated
@@ -391,15 +395,7 @@ USE_GM_WORK_BUG = True          !   [Boolean] default = False
                                 ! If true, compute the top-layer work tendency on the u-grid with the incorrect
                                 ! sign, for legacy reproducibility.
 
-! === module MOM_porous_barriers ===
-PORBAR_ANSWER_DATE = 99991231   ! default = 20181231
-                                ! The vintage of the porous barrier weight function calculations.  Values below
-                                ! 20220806 recover the old answers in which the layer averaged weights are not
-                                ! strictly limited by an upper-bound of 1.0 .
-
 ! === module MOM_dynamics_split_RK2 ===
-
-! === module MOM_continuity ===
 
 ! === module MOM_continuity_PPM ===
 ETA_TOLERANCE = 1.0E-06         !   [m] default = 3.75E-09
@@ -504,7 +500,7 @@ FOX_KEMPER_ML_RESTRAT_COEF = 1.0 !   [nondim] default = 0.0
                                 ! instabilities, times the minimum of the ratio of the mesoscale eddy kinetic
                                 ! energy to the large-scale geostrophic kinetic energy or 1 plus the square of
                                 ! the grid spacing over the deformation radius, as detailed by Fox-Kemper et al.
-                                ! (2010)
+                                ! (2011)
 MLE_FRONT_LENGTH = 500.0        !   [m] default = 0.0
                                 ! If non-zero, is the frontal-length scale used to calculate the upscaling of
                                 ! buoyancy gradients that is otherwise represented by the parameter
@@ -683,12 +679,12 @@ EPBL_LANGMUIR_SCHEME = "ADDITIVE" ! default = "NONE"
                                 !    NONE     - Do not do any extra mixing due to Langmuir turbulence
                                 !    RESCALE  - Use a multiplicative rescaling of mstar to account for Langmuir
                                 !      turbulence
-                                !    ADDITIVE - Add a Langmuir turblence contribution to mstar to other
+                                !    ADDITIVE - Add a Langmuir turbulence contribution to mstar to other
                                 !      contributions
 LT_ENHANCE_COEF = 0.044         !   [nondim] default = 0.447
                                 ! Coefficient for Langmuir enhancement of mstar
 LT_ENHANCE_EXP = -1.5           !   [nondim] default = -1.33
-                                ! Exponent for Langmuir enhancementt of mstar
+                                ! Exponent for Langmuir enhancement of mstar
 LT_MOD_LAC1 = 0.0               !   [nondim] default = -0.87
                                 ! Coefficient for modification of Langmuir number due to MLD approaching Ekman
                                 ! depth.
@@ -754,8 +750,8 @@ MAX_DELTA_SRESTORE = 5.0        !   [PSU or g kg-1] default = 999.0
                                 ! The maximum salinity difference used in restoring terms.
 CD_TIDES = 0.0018               !   [nondim] default = 1.0E-04
                                 ! The drag coefficient that applies to the tides.
-FIX_USTAR_GUSTLESS_BUG = False  !   [Boolean] default = True
-                                ! If true correct a bug in the time-averaging of the gustless wind friction
+USTAR_GUSTLESS_BUG = True       !   [Boolean] default = False
+                                ! If true include a bug in the time-averaging of the gustless wind friction
                                 ! velocity
 USE_RIGID_SEA_ICE = True        !   [Boolean] default = False
                                 ! If true, sea-ice is rigid enough to exert a nonhydrostatic pressure that

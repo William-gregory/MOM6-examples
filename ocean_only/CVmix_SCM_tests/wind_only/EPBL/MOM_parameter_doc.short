@@ -111,7 +111,7 @@ EQN_OF_STATE = "LINEAR"         ! default = "WRIGHT"
 DRHO_DT = -0.255                !   [kg m-3 K-1] default = -0.2
                                 ! When EQN_OF_STATE=LINEAR, this is the partial derivative of density with
                                 ! temperature.
-DRHO_DS = 0.764                 !   [kg m-3 PSU-1] default = 0.8
+DRHO_DS = 0.764                 !   [kg m-3 ppt-1] default = 0.8
                                 ! When EQN_OF_STATE=LINEAR, this is the partial derivative of density with
                                 ! salinity.
 
@@ -149,6 +149,7 @@ THICKNESS_CONFIG = "coord"      ! default = "uniform"
                                 !     uniform - uniform thickness layers evenly distributed
                                 !       between the surface and MAXIMUM_DEPTH.
                                 !     list - read a list of positive interface depths.
+                                !     param - use thicknesses from parameter THICKNESS_INIT_VALUES.
                                 !     DOME - use a slope and channel configuration for the
                                 !       DOME sill-overflow test case.
                                 !     ISOMIP - use a configuration for the
@@ -186,9 +187,9 @@ TS_CONFIG = "SCM_CVMix_tests"   !
                                 !     rossby_front - a mixed layer front in thermal wind balance.
                                 !     SCM_CVMix_tests - used in the SCM CVMix tests.
                                 !     USER - call a user modified routine.
-SCM_L1_TEMP = 15.0              !   [C] default = 20.0
+SCM_L1_TEMP = 15.0              !   [degC] default = 20.0
                                 ! Layer 1 surface temperature
-SCM_L2_TEMP = 15.0              !   [C] default = 20.0
+SCM_L2_TEMP = 15.0              !   [degC] default = 20.0
                                 ! Layer 2 surface temperature
 SCM_L2_DTDZ = 0.01              !   [C/m] default = 0.0
                                 ! Initial temperature stratification in layer 2
@@ -221,11 +222,7 @@ KV = 0.0                        !   [m2 s-1]
 
 ! === module MOM_thickness_diffuse ===
 
-! === module MOM_porous_barriers ===
-
 ! === module MOM_dynamics_unsplit ===
-
-! === module MOM_continuity ===
 
 ! === module MOM_continuity_PPM ===
 UPWIND_1ST_CONTINUITY = True    !   [Boolean] default = False
@@ -296,6 +293,13 @@ RECLAIM_FRAZIL = False          !   [Boolean] default = True
                                 ! is above the freezing point.
 
 ! === module MOM_energetic_PBL ===
+EPBL_ANSWER_DATE = 20231231     ! default = 99991231
+                                ! The vintage of the order of arithmetic and expressions in the energetic PBL
+                                ! calculations.  Values below 20190101 recover the answers from the end of 2018,
+                                ! while higher values use updated and more robust forms of the same expressions.
+                                ! Values below 20240101 use A**(1./3.) to estimate the cube root of A in several
+                                ! expressions, while higher values use the integer root function cuberoot(A) and
+                                ! therefore can work with scaled variables.
 USE_MLD_ITERATION = False       !   [Boolean] default = True
                                 ! A logical that specifies whether or not to use the distance to the bottom of
                                 ! the actively turbulent boundary layer to help set the EPBL length scale.
@@ -327,8 +331,7 @@ VARIABLE_WINDS = False          !   [Boolean] default = True
 WIND_CONFIG = "const"           ! default = "zero"
                                 ! The character string that indicates how wind forcing is specified.  Valid
                                 ! options include (file), (data_override), (2gyre), (1gyre), (gyres), (zero),
-                                ! (const), (Neverworld), (scurves), (ideal_hurr), (SCM_ideal_hurr),
-                                ! (SCM_CVmix_tests) and (USER).
+                                ! (const), (Neverworld), (scurves), (ideal_hurr), (SCM_CVmix_tests) and (USER).
 CONST_WIND_TAUX = 0.1           !   [Pa]
                                 ! With wind_config const, this is the constant zonal wind-stress
 CONST_WIND_TAUY = 0.0           !   [Pa]

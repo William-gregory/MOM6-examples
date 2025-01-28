@@ -311,6 +311,18 @@ AC_CHECK_SIZEOF([sigjmp_buf], [], [#include <setjmp.h>])
 AC_LANG_POP([C])
 
 
+# Coupler macros
+AC_DEFINE([use_AM3_physics])
+AC_DEFINE([_USE_LEGACY_LAND_])
+
+
+# TODO: We cannot currently provide tests for these libraries, and explicitly
+#   setting LIBS in the Makefile will append, rather than prepend, the flags,
+#   which would break the ordering.
+# For now, we explicitly prepend these libraries, but this needs to be fixed.
+LIBS="-licebergs -lice_param -latmos_null -lland_null ${LIBS}"
+
+
 # Prepare output
 AC_SUBST([CPPFLAGS])
 AC_CONFIG_FILES([Makefile:Makefile.in])
