@@ -3,7 +3,7 @@
 	url = https://github.com/William-gregory/MOM6.git
 [submodule "src/SIS2"]
 	path = src/SIS2
-	url = https://github.com/William-gregory/SIS2.git
+	url = https://github.com/m2lines/SIS2.git
 [submodule "tools/matlab/gtools"]
 	path = tools/matlab/gtools
 	url = https://github.com/Adcroft/gtools.git
