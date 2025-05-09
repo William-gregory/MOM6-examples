@@ -33,10 +33,10 @@
 	url = https://github.com/NOAA-GFDL/ice_param.git
 [submodule "src/FMS1"]
 	path = src/FMS1
-	url = https://github.com/NOAA-GFDL/FMS
+	url = https://github.com/William-gregory/FMS
 [submodule "src/FMS2"]
 	path = src/FMS2
-	url = https://github.com/NOAA-GFDL/FMS
+	url = https://github.com/William-gregory/FMS
 [submodule "shared/tools/f90nml"]
 	path = shared/tools/f90nml
 	url = https://github.com/marshallward/f90nml.git
