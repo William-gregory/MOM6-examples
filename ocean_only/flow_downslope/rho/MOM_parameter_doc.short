@@ -106,7 +106,7 @@ NK = 40                         !   [nondim]
                                 ! The number of model layers.
 
 ! === module MOM_EOS ===
-EQN_OF_STATE = "LINEAR"         ! default = "WRIGHT"
+EQN_OF_STATE = "LINEAR"         ! default = "WRIGHT_FULL"
                                 ! EQN_OF_STATE determines which ocean equation of state should be used.
                                 ! Currently, the valid choices are "LINEAR", "UNESCO", "JACKETT_MCD", "WRIGHT",
                                 ! "WRIGHT_REDUCED", "WRIGHT_FULL", "NEMO", "ROQUET_RHO", "ROQUET_SPV" and
@@ -171,6 +171,11 @@ INTERPOLATION_SCHEME = "PQM_IH4IH3" ! default = "P1M_H2"
                                 !  P3M_IH6IH5 (4th-order accurate)
                                 !  PQM_IH4IH3 (4th-order accurate)
                                 !  PQM_IH6IH5 (5th-order accurate)
+REGRIDDING_ANSWER_DATE = 20181231 ! default = 99991231
+                                ! The vintage of the expressions and order of arithmetic to use for regridding.
+                                ! Values below 20190101 result in the use of older, less accurate expressions
+                                ! that were in use at the end of 2018.  Higher values result in the use of more
+                                ! robust and accurate forms of mathematically equivalent expressions.
 BOUNDARY_EXTRAPOLATION = True   !   [Boolean] default = False
                                 ! When defined, a proper high-order reconstruction scheme is used within
                                 ! boundary cells rather than PCM. E.g., if PPM is used for remapping, a PPM
@@ -181,7 +186,7 @@ BOUNDARY_EXTRAPOLATION = True   !   [Boolean] default = False
                                 ! in z-coordinate mode, the parameter is a list of level
                                 ! thicknesses (in m). In sigma-coordinate mode, the list
                                 ! is of non-dimensional fractions of the water column.
-!TARGET_DENSITIES = 1034.0, 1034.025, 1034.0500000000002, 1034.0750000000003, 1034.1000000000004, 1034.1250000000005, 1034.1500000000005, 1034.1750000000006, 1034.2000000000007, 1034.2250000000008, 1034.250000000001, 1034.275000000001, 1034.300000000001, 1034.3250000000012, 1034.3500000000013, 1034.3750000000014, 1034.4000000000015, 1034.4250000000015, 1034.4500000000016, 1034.4750000000017, 1034.5000000000018, 1034.525000000002, 1034.550000000002, 1034.575000000002, 1034.6000000000022, 1034.6250000000023, 1034.6500000000024, 1034.6750000000025, 1034.7000000000025, 1034.7250000000026, 1034.7500000000027, 1034.7750000000028, 1034.800000000003, 1034.825000000003, 1034.850000000003, 1034.8750000000032, 1034.9000000000033, 1034.9250000000034, 1034.9500000000035, 1034.9750000000035, 1035.0 !   [kg m^-3]
+!TARGET_DENSITIES = 1034.0, 1034.025, 1034.0500000000002, 1034.0750000000003, 1034.1000000000004, 1034.1250000000005, 1034.1500000000005, 1034.1750000000006, 1034.2000000000007, 1034.2250000000008, 1034.250000000001, 1034.275000000001, 1034.300000000001, 1034.3250000000012, 1034.3500000000013, 1034.3750000000014, 1034.4000000000015, 1034.4250000000015, 1034.4500000000016, 1034.4750000000017, 1034.5000000000018, 1034.525000000002, 1034.550000000002, 1034.575000000002, 1034.6000000000022, 1034.6250000000023, 1034.6500000000024, 1034.6750000000025, 1034.7000000000025, 1034.7250000000026, 1034.7500000000027, 1034.7750000000028, 1034.800000000003, 1034.825000000003, 1034.850000000003, 1034.8750000000032, 1034.9000000000033, 1034.9250000000034, 1034.9500000000035, 1034.9750000000035, 1035.0 !   [kg m-3]
                                 ! RHO target densities for interfaces
 REMAPPING_SCHEME = "PQM_IH4IH3" ! default = "PLM"
                                 ! This sets the reconstruction scheme used for vertical remapping for all
@@ -295,6 +300,11 @@ BE = 0.7                        !   [nondim] default = 0.6
                                 ! (1) that is used for the Coriolis and inertial terms.  BE may be from 0.5 to
                                 ! 1, but instability may occur near 0.5. BE is also applicable if SPLIT is false
                                 ! and USE_RK2 is true.
+VISC_REM_BUG = True             !   [Boolean] default = False
+                                ! If true, visc_rem_[uv] in split mode is incorrectly calculated or accounted
+                                ! for in two places. This parameter controls the defaults of two individual
+                                ! flags, VISC_REM_TIMESTEP_BUG in MOM_dynamics_split_RK2(b) and
+                                ! VISC_REM_BT_WEIGHT_BUG in MOM_barotropic.
 
 ! === module MOM_continuity_PPM ===
 ETA_TOLERANCE = 1.0E-12         !   [m] default = 2.0E-09
@@ -342,8 +352,6 @@ DIRECT_STRESS = True            !   [Boolean] default = False
 HMIX_FIXED = 20.0               !   [m]
                                 ! The prescribed depth over which the near-surface viscosity and diffusivity are
                                 ! elevated when the bulk mixed layer is not used.
-MAXVEL = 10.0                   !   [m s-1] default = 3.0E+08
-                                ! The maximum velocity allowed before the velocity components are truncated.
 VEL_UNDERFLOW = 1.0E-30         !   [m s-1] default = 0.0
                                 ! A negligibly small velocity magnitude below which velocity components are set
                                 ! to 0.  A reasonable value might be 1e-30 m/s, which is less than an Angstrom
@@ -407,6 +415,8 @@ MAXTRUNC = 10                   !   [truncations save_interval-1] default = 0
                                 ! The run will be stopped, and the day set to a very large value if the velocity
                                 ! is truncated more than MAXTRUNC times between energy saves.  Set MAXTRUNC to 0
                                 ! to stop if there is any truncation of velocities.
+MAXVEL = 10.0                   !   [m s-1] default = 3.0E+08
+                                ! The maximum velocity allowed before the velocity components are truncated.
 DATE_STAMPED_STDOUT = False     !   [Boolean] default = True
                                 ! If true, use dates (not times) in messages to stdout
 TIMEUNIT = 3600.0               !   [s] default = 8.64E+04
