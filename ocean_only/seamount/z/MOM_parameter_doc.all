@@ -64,7 +64,7 @@ ENABLE_BUGS_BY_DEFAULT = True   !   [Boolean] default = True
                                 ! If true, the defaults for certain recently added bug-fix flags are set to
                                 ! recreate the bugs so that the code can be moved forward without changing
                                 ! answers for existing configurations.  The defaults for groups of bug-fix flags
-                                ! are periodcially changed to correct the bugs, at which point this parameter
+                                ! are periodically changed to correct the bugs, at which point this parameter
                                 ! will no longer be used to set their default.  Setting this to false means that
                                 ! bugs are only used if they are actively selected, but it also means that
                                 ! answers may change when code is updated due to newly found bugs.
@@ -178,8 +178,6 @@ ICE_SHELF = False               !   [Boolean] default = False
                                 ! If true, enables the ice shelf model.
 USE_PARTICLES = False           !   [Boolean] default = False
                                 ! If true, use the particles package.
-USE_UH_PARTICLES = False        !   [Boolean] default = False
-                                ! If true, use the uh velocity in the particles package.
 ENSEMBLE_OCEAN = False          !   [Boolean] default = False
                                 ! If False, The model is being run in serial mode as a single realization. If
                                 ! True, The current model realization is part of a larger ensemble and at the
@@ -217,10 +215,6 @@ NJHALO = 3                      ! default = 4
 REFERENCE_HEIGHT = 0.0          !   [m] default = 0.0
                                 ! A reference value for geometric height fields, such as bathyT.
 
-! === module MOM_fixed_initialization ===
-INPUTDIR = "INPUT/"             ! default = "."
-                                ! The directory in which input files are found.
-
 ! === module MOM_grid_init ===
 GRID_CONFIG = "cartesian"       !
                                 ! A character string that determines the method for defining the horizontal
@@ -247,6 +241,9 @@ LENLON = 200.0                  !   [km]
                                 ! The longitudinal or x-direction length of the domain.
 RAD_EARTH = 6.378E+06           !   [m] default = 6.378E+06
                                 ! The radius of the Earth.
+READ_MEAN_SEA_LEVEL = False     !   [Boolean] default = False
+                                ! If true, use a 2D map for time mean sea level, which is used to calculate time
+                                ! mean ocean total thickness.
 TOPO_CONFIG = "seamount"        !
                                 ! This specifies how bathymetry is specified:
                                 !     file - read bathymetric information from the file
@@ -298,6 +295,8 @@ OBC_NUMBER_OF_SEGMENTS = 0      ! default = 0
 MASKING_DEPTH = -9999.0         !   [m] default = -9999.0
                                 ! The depth below which to mask points as land points, for which all fluxes are
                                 ! zeroed out. MASKING_DEPTH is ignored if it has the special default value.
+
+! === module MOM_fixed_initialization ===
 CHANNEL_CONFIG = "none"         ! default = "none"
                                 ! A parameter that determines which set of channels are
                                 ! restricted to specific  widths.  Options are:
@@ -334,7 +333,7 @@ G_EARTH = 9.8                   !   [m s-2] default = 9.8
                                 ! The gravitational acceleration of the Earth.
 RHO_0 = 1035.0                  !   [kg m-3] default = 1035.0
                                 ! The mean ocean density used with BOUSSINESQ true to calculate accelerations
-                                ! and the mass for conservation properties, or with BOUSSINSEQ false to convert
+                                ! and the mass for conservation properties, or with BOUSSINESQ false to convert
                                 ! some parameters from vertical units of m to kg m-2.
 BOUSSINESQ = True               !   [Boolean] default = True
                                 ! If true, make the Boussinesq approximation.
@@ -549,6 +548,9 @@ ALE_COORDINATE_CONFIG = "UNIFORM" ! default = "UNIFORM"
                                 ! is of non-dimensional fractions of the water column.
 MIN_THICKNESS = 0.1             !   [m] default = 0.001
                                 ! When regridding, this is the minimum layer thickness allowed.
+USE_ADJUST_INTERFACE_MOTION = True !   [Boolean] default = True
+                                ! When regridding, after the primary grid generation, call a function that
+                                ! ensures positive layer thicknesses. Historically, this was required.
 REMAPPING_SCHEME = "PPM_IH4"    ! default = "PLM"
                                 ! This sets the reconstruction scheme used for vertical remapping for all
                                 ! variables. It can be one of the following schemes:
@@ -588,7 +590,8 @@ REMAP_BOUNDARY_EXTRAP = False   !   [Boolean] default = False
                                 ! of piecewise constant
 INIT_BOUNDARY_EXTRAP = False    !   [Boolean] default = False
                                 ! If true, values at the interfaces of boundary cells are extrapolated instead
-                                ! of piecewise constant during initialization.Defaults to REMAP_BOUNDARY_EXTRAP.
+                                ! of piecewise constant during initialization.  Defaults to
+                                ! REMAP_BOUNDARY_EXTRAP.
 REMAPPING_USE_OM4_SUBCELLS = True !   [Boolean] default = True
                                 ! This selects the remapping algorithm used in OM4 that does not use the full
                                 ! reconstruction for the top- and lower-most sub-layers, but instead assumes
@@ -607,6 +610,11 @@ REMAP_AFTER_INITIALIZATION = True !   [Boolean] default = True
                                 ! If true, applies regridding and remapping immediately after initialization so
                                 ! that the state is ALE consistent. This is a legacy step and should not be
                                 ! needed if the initialization is consistent with the coordinate mode.
+REGRID_USE_DEPTH_BASED_TIME_FILTER = True !   [Boolean] default = True
+                                ! If true, always uses depth-based time filtering code that updates the
+                                ! generated grid using REGRID_TIME_SCALE, REGRID_FILTER_SHALLOW_DEPTH,
+                                ! REGRID_FILTER_DEEP_DEPTH parameters. Setting to True always uses filtering but
+                                ! setting to False bypasses calculations when filter times = 0.
 REGRID_TIME_SCALE = 0.0         !   [s] default = 0.0
                                 ! The time-scale used in blending between the current (old) grid and the target
                                 ! (new) grid. A short time-scale favors the target grid (0. or anything less
@@ -618,7 +626,7 @@ REGRID_FILTER_SHALLOW_DEPTH = 0.0 !   [m] default = 0.0
 REGRID_FILTER_DEEP_DEPTH = 0.0  !   [m] default = 0.0
                                 ! The depth below which full time-filtering is applied with time-scale
                                 ! REGRID_TIME_SCALE. Between depths REGRID_FILTER_SHALLOW_DEPTH and
-                                ! REGRID_FILTER_SHALLOW_DEPTH the filter weights adopt a cubic profile.
+                                ! REGRID_FILTER_DEEP_DEPTH the filter weights adopt a cubic profile.
 REMAP_VEL_MASK_BBL_THICK = -0.001 !   [m] default = -0.001
                                 ! A thickness of a bottom boundary layer below which velocities in thin layers
                                 ! are zeroed out after remapping, following practice with Hybgen remapping, or a
@@ -629,6 +637,8 @@ REMAP_VEL_CONSERVE_KE = False   !   [Boolean] default = False
                                 ! (CS%BBL_h_vel_mask > 0.0) .and. (CS%h_vel_mask > 0.0)
 
 ! === module MOM_state_initialization ===
+INPUTDIR = "INPUT/"             ! default = "."
+                                ! The directory in which input files are found.
 FATAL_INCONSISTENT_RESTART_TIME = False !   [Boolean] default = False
                                 ! If true and a time_in value is provided to MOM_initialize_state, verify that
                                 ! the time read from a restart file is the same as time_in, and issue a fatal
@@ -736,6 +746,8 @@ DIAG_REMAPPING_USE_OM4_SUBCELLS = True !   [Boolean] default = True
                                 ! false.
 USE_INDEX_DIAGNOSTIC_AXES = False !   [Boolean] default = False
                                 ! If true, use a grid index coordinate convention for diagnostic axes.
+SYMMETRIC_DOWNSAMPLE_SUMS = False !   [Boolean] default = False
+                                ! If true, use rotationally symmetric sums when downsampling diagnostics.
 DIAG_COORDS = "z Z ZSTAR"       ! default = "z Z ZSTAR"
                                 ! A list of string tuples associating diag_table modules to a coordinate
                                 ! definition used for diagnostics. Each string is of the form "MODULE_SUFFIX
@@ -798,7 +810,7 @@ RESOLN_SCALED_KH = False        !   [Boolean] default = False
                                 ! If true, the Laplacian lateral viscosity is scaled away when the first
                                 ! baroclinic deformation radius is well resolved.
 DEPTH_SCALED_KHTH = False       !   [Boolean] default = False
-                                ! If true, KHTH is scaled away when the depth is shallowerthan a reference
+                                ! If true, KHTH is scaled away when the depth is shallower than a reference
                                 ! depth: KHTH = MIN(1,H/H0)**N * KHTH, where H0 is a reference depth, controlled
                                 ! via DEPTH_SCALED_KHTH_H0, and the exponent (N) is controlled via
                                 ! DEPTH_SCALED_KHTH_EXP.
@@ -810,7 +822,7 @@ RESOLN_SCALED_KHTR = False      !   [Boolean] default = False
                                 ! baroclinic deformation radius is well resolved.
 RESOLN_USE_EBT = False          !   [Boolean] default = False
                                 ! If true, uses the equivalent barotropic wave speed instead of first baroclinic
-                                ! wave for calculating the resolution fn.
+                                ! wave for calculating the resolution function.
 BACKSCAT_EBT_POWER = 0.0        !   [nondim] default = 0.0
                                 ! Power to raise EBT vertical structure to when backscatter has vertical
                                 ! structure.
@@ -988,7 +1000,7 @@ CALCULATE_SAL = False           !   [Boolean] default = False
 USE_HA = False                  !   [Boolean] default = False
                                 ! If true, perform inline harmonic analysis.
 BE = 0.7                        !   [nondim] default = 0.6
-                                ! If SPLIT is true, BE determines the relative weighting of a  2nd-order
+                                ! If SPLIT is true, BE determines the relative weighting of a 2nd-order
                                 ! Runga-Kutta baroclinic time stepping scheme (0.5) and a backward Euler scheme
                                 ! (1) that is used for the Coriolis and inertial terms.  BE may be from 0.5 to
                                 ! 1, but instability may occur near 0.5. BE is also applicable if SPLIT is false
@@ -1200,8 +1212,8 @@ LEITH_KH = False                !   [Boolean] default = False
 BOUND_KH = True                 !   [Boolean] default = True
                                 ! If true, the Laplacian coefficient is locally limited to be stable.
 EY24_EBT_BS = False             !   [Boolean] default = False
-                                ! If true, use the the backscatter scheme (EBT mode with kill switch)developed
-                                ! by Yankovsky et al. (2024).
+                                ! If true, use the backscatter scheme (EBT mode with kill switch) developed by
+                                ! Yankovsky et al. (2024).
 ANISOTROPIC_VISCOSITY = False   !   [Boolean] default = False
                                 ! If true, allow anistropic viscosity in the Laplacian horizontal viscosity.
 ADD_LES_VISCOSITY = False       !   [Boolean] default = False
@@ -1225,8 +1237,11 @@ USE_KH_BG_2D = False            !   [Boolean] default = False
                                 ! viscosity is the maximum of the other terms and this background value.
 FRICTWORK_BUG = False           !   [Boolean] default = False
                                 ! If true, retain an answer-changing bug in calculating the FrictWork, which
-                                ! cancels the h in thickness flux and the h at velocity point. This isnot
+                                ! cancels the h in thickness flux and the h at velocity point. This is not
                                 ! recommended.
+OBC_SPECIFIED_STRAIN_BUG = True !   [Boolean] default = True
+                                ! If true, recover a bug that specified shear strain option at open boundaries
+                                ! cannot be applied.
 
 ! === module MOM_vert_friction ===
 VERT_FRICTION_ANSWER_DATE = 99991231 ! default = 99991231
@@ -1613,7 +1628,7 @@ DISSIPATION_N1 = 0.0            !   [J m-3] default = 0.0
 DISSIPATION_KD_MIN = 0.0        !   [m2 s-1] default = 0.0
                                 ! The minimum vertical diffusivity applied as a floor.
 DOUBLE_DIFFUSION = False        !   [Boolean] default = False
-                                ! If true, increase diffusivites for temperature or salinity based on the
+                                ! If true, increase diffusivities for temperature or salinity based on the
                                 ! double-diffusive parameterization described in Large et al. (1994).
 
 ! === module MOM_kappa_shear ===
@@ -1631,7 +1646,7 @@ KD_SEED_KAPPA_SHEAR = 1.0       !   [m2 s-1] default = 1.0
 LZ_RESCALE = 1.0                !   [nondim] default = 1.0
                                 ! A coefficient to rescale the distance to the nearest solid boundary. This
                                 ! adjustment is to account for regions where 3 dimensional turbulence prevents
-                                ! the growth of shear instabilies [nondim].
+                                ! the growth of shear instabilities [nondim].
 TKE_BACKGROUND = 0.0            !   [m2 s-2] default = 0.0
                                 ! A background level of TKE used in the first iteration of the kappa equation.
                                 ! TKE_BACKGROUND could be 0.
@@ -1756,7 +1771,7 @@ USE_NEUTRAL_DIFFUSION = False   !   [Boolean] default = False
 ! === module MOM_hor_bnd_diffusion ===
 ! This module implements horizontal diffusion of tracers near boundaries
 USE_HORIZONTAL_BOUNDARY_DIFFUSION = False !   [Boolean] default = False
-                                ! If true, enables the horizonal boundary tracer's diffusion module.
+                                ! If true, enables the horizontal boundary tracer's diffusion module.
 OBSOLETE_DIAGNOSTIC_IS_FATAL = True !   [Boolean] default = True
                                 ! If an obsolete diagnostic variable appears in the diag_table, cause a FATAL
                                 ! error rather than issue a WARNING.
@@ -1802,7 +1817,7 @@ ENERGYSAVEDAYS_GEOMETRIC = 0.0  !   [days] default = 0.0
 
 ! === module ocean_stochastics_init ===
 DO_SPPT = False                 !   [Boolean] default = False
-                                ! If true, then stochastically perturb the thermodynamic tendencies of T,S, amd
+                                ! If true, then stochastically perturb the thermodynamic tendencies of T,S, and
                                 ! h.  Amplitude and correlations are controlled by the nam_stoch namelist in the
                                 ! UFS model only.
 DO_SKEB = False                 !   [Boolean] default = False
